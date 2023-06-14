@@ -12,6 +12,7 @@ namespace XDriveStorage;
 [Command("xdrive")]
 public class Program
 {
+    public static IConsole IConsole { get; private set; }
     public static bool Verbose { get; private set; }
     public static bool Quiet { get; private set; }
     
@@ -35,10 +36,11 @@ public class Program
 
     public Task<int> Interceptor(
         InterceptorExecutionDelegate next,
-        CommandContext ctx,
+        CommandContext context,
         [Option('v', AssignToExecutableSubcommands = true)] bool verbose = false,
         [Option('q', AssignToExecutableSubcommands = true)] bool quiet = false)
     {
+        IConsole = context.Console;
         Verbose = verbose;
         Quiet = quiet;
         

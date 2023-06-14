@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 using XDriveStorage.Users;
 
@@ -25,19 +26,19 @@ public class UserContainer : IEnumerable<User>
         return true;
     }
 
-    public bool TryGet(string name, out User user)
+    public bool TryGet(string name, [NotNullWhen(true)] out User? user)
     {
         return Users.TryGetValue(name, out user);
     }
 
-    public bool Exists(string name)
+    public bool Exists(string id)
     {
-        return Users.ContainsKey(name);
+        return Users.ContainsKey(id);
     }
 
-    public bool Remove(string name)
+    public bool Remove(string id)
     {
-        return Users.Remove(name);
+        return Users.Remove(id);
     }
 
     public IEnumerator<User> GetEnumerator()

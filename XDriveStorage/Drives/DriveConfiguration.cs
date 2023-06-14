@@ -4,5 +4,5 @@ namespace XDriveStorage.Drives;
 
 public class DriveConfiguration
 {
-    public ulong MaxFileSize { get; set; } = 25000000;
+    [JsonProperty("max_file_size")] public ulong MaxFileSize { get; set; } = 25000000;
 }

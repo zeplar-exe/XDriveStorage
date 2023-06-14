@@ -7,7 +7,7 @@ namespace XDriveStorage.Configuration;
 
 public interface IAppConfiguration
 {
-    public string RootUserId { get; set; }
+    public string? RootUserId { get; set; }
     public UserContainer Users { get; }
     public DriveContainer Drives { get; }
 
