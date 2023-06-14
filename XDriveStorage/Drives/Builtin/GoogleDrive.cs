@@ -184,8 +184,8 @@ public class GoogleDrive : IDrive
 
         var secretsJson = new JObject
         {
-            { "client_id", userCredentials.Get("client_id") },
-            { "client_secret", userCredentials.Get("client_secret") }
+            { "client_id", userCredentials["client_id"] },
+            { "client_secret", userCredentials["client_secret"] }
         };
         // https://developers.google.com/api-client-library/dotnet/guide/aaa_client_secrets
         // Only client_id and client_secret are required. Thus we can just use the credentials on their own.

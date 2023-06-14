@@ -7,6 +7,8 @@ namespace XDriveStorage.Configuration;
 public class UserContainer : IEnumerable<User>
 {
     private Dictionary<string, User> Users { get; }
+    
+    public int Count => Users.Count;
 
     public UserContainer()
     {

@@ -12,17 +12,10 @@ namespace XDriveStorage.Commands;
 [Command("drives")]
 public class DrivesCommand
 {
-    private IAppConfiguration AppConfiguration { get; }
-
-    public DrivesCommand(IAppConfiguration appConfiguration)
-    {
-        AppConfiguration = appConfiguration;
-    }
-
     [DefaultCommand]
     public void Execute()
     {
-        foreach (var drive in AppConfiguration.Drives)
+        foreach (var drive in Program.AppConfiguration.Drives)
         {
             if (Program.Verbose)
             {
@@ -32,6 +25,11 @@ public class DrivesCommand
             {
                 Console.WriteLine(drive.Name);
             }
+        }
+
+        if (Program.AppConfiguration.Drives.Count == 0)
+        {
+            Console.WriteLine("No drives to display... that shouldn't be possible. Maybe reinstall?");
         }
     }
 }

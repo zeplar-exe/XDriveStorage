@@ -1,6 +1,7 @@
 ﻿using CommandDotNet;
 using CommandDotNet.Prompts;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using XDriveStorage.Attributes;
@@ -13,26 +14,24 @@ namespace XDriveStorage.Commands;
 [Command("users")]
 public class UsersCommand
 {
-    private IAppConfiguration AppConfiguration { get; }
-
-    public UsersCommand(IAppConfiguration appConfiguration)
-    {
-        AppConfiguration = appConfiguration;
-    }
-
     [DefaultCommand]
     public int Execute()
     {
-        foreach (var user in AppConfiguration.Users)
+        foreach (var user in Program.AppConfiguration.Users)
         {
             if (Program.Verbose)
             {
-                Console.WriteLine(user.Id);
+                Console.WriteLine(user);   
             }
             else
             {
-                Console.WriteLine(user);   
+                Console.WriteLine(user.Id);
             }
+        }
+        
+        if (Program.AppConfiguration.Users.Count == 0)
+        {
+            Console.WriteLine("No users to display. Add one with 'xdrive users add'.");
         }
         
         return 0;
@@ -47,14 +46,14 @@ public class UsersCommand
     {
         credentials ??= new JObject();
 
-        if (!AppConfiguration.Drives.Exists(drive))
+        if (!Program.AppConfiguration.Drives.Exists(drive))
         {
             Console.WriteLine($"The drive '{drive}' does not exist.");
 
             return 1;
         }
         
-        if (!AppConfiguration.Drives.TryGet(drive, out var driveObject))
+        if (!Program.AppConfiguration.Drives.TryGet(drive, out var driveObject))
         {
             Console.WriteLine($"Failed to retrieve drive '{drive}'.");
 
@@ -68,19 +67,28 @@ public class UsersCommand
             if (cancel)
                 return 1;
 
-            credentials[credential] = JToken.Parse(credentialInput ?? string.Empty);
+            try
+            {
+                credentials[credential] = JToken.Parse(credentialInput ?? string.Empty);
+            }
+            catch (JsonReaderException)
+            {
+                Console.WriteLine("Parse failed with JsonReaderException, converting input to JSON string.");
+
+                credentials[credential] = credentialInput;
+            }
         }
         
         var user = new User(id, drive, new UserCredentials(credentials));
 
-        if (AppConfiguration.Users.Exists(user.Id))
+        if (Program.AppConfiguration.Users.Exists(user.Id))
         {
             Console.WriteLine($"The user '{id}' already exists.");
 
             return 1;
         }
         
-        if (!AppConfiguration.Users.Add(user))
+        if (!Program.AppConfiguration.Users.Add(user))
         {
             Console.WriteLine($"Failed to add user '{id}'.");
 
@@ -94,14 +102,14 @@ public class UsersCommand
     public int Remove(
         string id)
     {
-        if (!AppConfiguration.Users.Exists(id))
+        if (!Program.AppConfiguration.Users.Exists(id))
         {
             Console.WriteLine($"The user '{id}' does not exist.");
 
             return 1;
         }
         
-        if (AppConfiguration.Users.Remove(id))
+        if (Program.AppConfiguration.Users.Remove(id))
         {
             Console.WriteLine($"Removed user '{id}'.");
 

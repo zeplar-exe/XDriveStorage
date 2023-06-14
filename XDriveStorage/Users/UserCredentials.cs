@@ -4,17 +4,18 @@ using XDriveStorage.Drives;
 
 namespace XDriveStorage.Users;
 
-public class UserCredentials
+public class UserCredentials : Dictionary<string, JToken>
 {
-    private Dictionary<string, JToken> Credentials { get; }
-
-    public UserCredentials(JObject credentialJson)
+    public UserCredentials()
     {
-        Credentials = credentialJson.ToObject<Dictionary<string, JToken>>()!;
+        
     }
 
-    public JToken Get(string credential)
+    public UserCredentials(JObject json)
     {
-        return Credentials[credential];
+        foreach (var (key, value) in json)
+        {
+            this[key] = value!;
+        }
     }
 }

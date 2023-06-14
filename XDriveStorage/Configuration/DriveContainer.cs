@@ -9,6 +9,8 @@ public class DriveContainer : IEnumerable<IDrive>
 {
     private Dictionary<string, IDrive> Drives { get; }
 
+    public int Count => Drives.Count;
+
     public DriveContainer()
     {
         Drives = new Dictionary<string, IDrive>();

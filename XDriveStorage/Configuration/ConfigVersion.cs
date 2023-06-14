@@ -10,6 +10,7 @@ public struct ConfigVersion : IEquatable<ConfigVersion>
     public int Patch { get; }
 
     public static ConfigVersion Zero => new(0, 0, 0);
+    public static ConfigVersion Current => new(0, 0, 0);
 
     public ConfigVersion(int major, int minor, int patch)
     {
@@ -57,7 +58,7 @@ public struct ConfigVersion : IEquatable<ConfigVersion>
 
         public override ConfigVersion ReadJson(JsonReader reader, Type objectType, ConfigVersion existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
-            var str = reader.ReadAsString();
+            var str = reader.Value?.ToString();
 
             if (str == null)
                 return ConfigVersion.Zero;

@@ -5,9 +5,9 @@ namespace XDriveStorage.Users;
 
 public class User
 {
-    public string Id { get; }
-    public string Drive { get; }
-    public UserCredentials Credentials { get; }
+    [JsonProperty("id")] public string Id { get; private set; }
+    [JsonProperty("drive")] public string Drive { get; private set; }
+    [JsonProperty("credentials")] public UserCredentials Credentials { get; private set; }
 
     public User(string id, string drive, UserCredentials credentials)
     {

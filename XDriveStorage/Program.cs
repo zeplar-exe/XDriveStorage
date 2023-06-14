@@ -4,6 +4,7 @@ using CommandDotNet.Prompts;
 
 using XDriveStorage.Attributes;
 using XDriveStorage.Commands;
+using XDriveStorage.Configuration;
 using XDriveStorage.Extensions;
 
 namespace XDriveStorage;
@@ -14,11 +15,14 @@ public class Program
     public static bool Verbose { get; private set; }
     public static bool Quiet { get; private set; }
     
+    public static IAppConfiguration AppConfiguration { get; private set; }
+    
     public static int Main(string[] args)
     {
+        AppConfiguration = new AppConfiguration();
+        
         return new AppRunner<Program>()
             .UsePrompter()
-            .RegisterSimpleInjector()
             .UseArgumentPrompter(
                 argumentPrompterFactory: (context, prompter) => new ArgumentPrompter(prompter, (ctx, argument) =>  
                     $"{argument.GetCustomAttribute<ArgumentMissingPrompt>()?.PromptText}"),
@@ -33,7 +37,7 @@ public class Program
         InterceptorExecutionDelegate next,
         CommandContext ctx,
         [Option('v', AssignToExecutableSubcommands = true)] bool verbose = false,
-        [Option('v', AssignToExecutableSubcommands = true)] bool quiet = false)
+        [Option('q', AssignToExecutableSubcommands = true)] bool quiet = false)
     {
         Verbose = verbose;
         Quiet = quiet;
@@ -41,7 +45,11 @@ public class Program
         if (quiet)
             Console.SetOut(new StringWriter());
         
-        return next();
+        var result = next();
+
+        AppConfiguration.Save();
+        
+        return result;
     }
     
     [Subcommand(RenameAs = "root")]
@@ -56,7 +64,7 @@ public class Program
     [Subcommand(RenameAs = "patch")]
     public PatchCommand PatchCommand { get; set; }
     
-    [Subcommand(RenameAs = "services")]
+    [Subcommand(RenameAs = "drives")]
     public DrivesCommand DrivesCommand { get; set; }
     
     [Subcommand(RenameAs = "users")]
