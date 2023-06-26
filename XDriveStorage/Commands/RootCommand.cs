@@ -34,7 +34,7 @@ public class RootCommand
         
         if (!Program.AppConfiguration.Users.Exists(userId))
         {
-            Output.WriteWarning($"The root user '{userId}' does not exist; other operations may fail. Change it or create a user with this id.");
+            Output.WriteWarning($"The user '{userId}' does not exist; other operations may fail. Change it or create a user with this id.");
         }
     
         return 1;

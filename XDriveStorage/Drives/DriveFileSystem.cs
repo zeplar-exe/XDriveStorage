@@ -10,12 +10,29 @@ namespace XDriveStorage.Drives;
 
 public class DriveFileSystem
 {
+    private const string RootFileName = "00_root.json";
+
+    private IDrive RootDrive { get; }
     private RootDriveData RootDriveData { get; }
 
-    public static async Task<DriveFileSystem?> Create(User rootUser)
+    public static async Task<DriveFileSystem?> Create()
     {
-        const string RootFileName = "0_root.json";
-        
+        var rootUserId = Program.AppConfiguration.RootUserId;
+
+        if (rootUserId == null)
+        {
+            Output.WriteError("The root user has not been set.");
+
+            return null;
+        }
+
+        if (!Program.AppConfiguration.Users.TryGet(rootUserId, out var rootUser))
+        {
+            Output.WriteError($"Failed to get root user '{rootUserId}'.");
+            
+            return null;
+        }
+
         if (!Program.AppConfiguration.Drives.TryGet(rootUser.Drive, out var rootDrive))
         {
             Output.WriteError($"The root drive '{rootUser.Drive}' does not exist.");
@@ -38,20 +55,21 @@ public class DriveFileSystem
 
     private DriveFileSystem(IDrive rootDrive, RootDriveData rootDriveData)
     {
+        RootDrive = rootDrive;
         RootDriveData = rootDriveData;
     }
 
-    public void ReadFile(string name, Stream outputStream)
+    public async Task ReadFile(string name, Stream outputStream)
     {
         
     }
 
-    public void WriteFile(string name, Stream content)
+    public async Task WriteFile(string name, Stream content)
     {
         
     }
 
-    public void DeleteFile(string name)
+    public async Task DeleteFile(string name)
     {
         
     }
