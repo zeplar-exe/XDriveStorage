@@ -45,7 +45,7 @@ public class Program
         Quiet = quiet;
         
         if (quiet)
-            Console.SetOut(new StringWriter());
+            IConsole.SetOut(new StringWriter());
         
         var result = next();
 

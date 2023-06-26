@@ -19,17 +19,17 @@ public class DrivesCommand
         {
             if (Program.Verbose)
             {
-                Console.WriteLine(drive);
+                Output.WriteLine(drive);
             }
             else
             {
-                Console.WriteLine(drive.Name);
+                Output.WriteLine(drive.Name);
             }
         }
 
         if (Program.AppConfiguration.Drives.Count == 0)
         {
-            Console.WriteLine("No drives to display... that shouldn't be possible. Maybe reinstall?");
+            Output.WriteLine("No drives to display... that shouldn't be possible. Maybe reinstall?");
         }
     }
 }

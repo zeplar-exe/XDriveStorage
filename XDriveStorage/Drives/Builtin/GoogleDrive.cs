@@ -37,7 +37,7 @@ public class GoogleDrive : IDrive
         Configuration = configuration;
     }
 
-    public async Task<StorageLimit> GetStorageLimit(UserCredentials userCredentials)
+    public async Task<DriveInfo> GetDriveInfo(UserCredentials userCredentials)
     {
         var service = new DriveService(new BaseClientService.Initializer
         {
@@ -49,8 +49,9 @@ public class GoogleDrive : IDrive
         var about = await getRequest.ExecuteAsync();
 
         var limit = about.StorageQuota.Limit;
-        
-        return limit == null ? StorageLimit.Unlimited : StorageLimit.From(limit.Value);
+        var storageLimit = limit == null ? StorageLimit.Unlimited : StorageLimit.From(limit.Value);
+
+        return new DriveInfo(about.StorageQuota.Usage ?? 0, storageLimit);
     }
 
     public async Task<string[]> ListFileNames(UserCredentials userCredentials)
@@ -62,7 +63,7 @@ public class GoogleDrive : IDrive
 
     public async Task<bool> ReadFile(UserCredentials userCredentials, string name, Stream outputStream)
     {
-        var service = new DriveService(new BaseClientService.Initializer()
+        var service = new DriveService(new BaseClientService.Initializer
         {
             HttpClientInitializer = await GetGoogleCredentialsAsync(userCredentials),
             ApplicationName = ModuleName
@@ -82,7 +83,7 @@ public class GoogleDrive : IDrive
         {
             getRequest.MediaDownloader.ProgressChanged += progress =>
             {
-                Console.WriteLine($"Downloading '{name}': {progress.Status} {progress.BytesDownloaded}");
+                Output.WriteLine($"Downloading '{name}': {progress.Status} {progress.BytesDownloaded}");
 
                 if (progress.Status == DownloadStatus.Completed)
                     success = true;
@@ -96,7 +97,7 @@ public class GoogleDrive : IDrive
 
     public async Task<bool> WriteFile(UserCredentials userCredentials, string name, Stream content)
     {
-        var service = new DriveService(new BaseClientService.Initializer()
+        var service = new DriveService(new BaseClientService.Initializer
         {
             HttpClientInitializer = await GetGoogleCredentialsAsync(userCredentials),
             ApplicationName = ModuleName
@@ -119,13 +120,13 @@ public class GoogleDrive : IDrive
         {
             insertRequest.ProgressChanged += progress =>
             {
-                Console.WriteLine($"Uploading '{name}': {progress.Status} {progress.BytesSent}/{content.Length}");
+                Output.WriteLine($"Uploading '{name}': {progress.Status} {progress.BytesSent}/{content.Length}");
             };
         }
         
         insertRequest.ResponseReceived += file =>
         {
-            Console.WriteLine($"File '{name}' successfully uploaded.");
+            Output.WriteLine($"File '{name}' successfully uploaded.");
 
             success = true;
         };
@@ -137,7 +138,7 @@ public class GoogleDrive : IDrive
 
     public async Task<bool> DeleteFile(UserCredentials userCredentials, string name)
     {
-        var service = new DriveService(new BaseClientService.Initializer()
+        var service = new DriveService(new BaseClientService.Initializer
         {
             HttpClientInitializer = await GetGoogleCredentialsAsync(userCredentials),
             ApplicationName = ModuleName
@@ -178,14 +179,14 @@ public class GoogleDrive : IDrive
         return files.Files;
     }
     
-    private async Task<UserCredential> GetGoogleCredentialsAsync(UserCredentials userCredentials)
+    private static async Task<UserCredential> GetGoogleCredentialsAsync(UserCredentials userCredentials)
     {
         var secretsStream = new MemoryStream();
 
         var secretsJson = new JObject
         {
-            { "client_id", userCredentials["client_id"] },
-            { "client_secret", userCredentials["client_secret"] }
+            { "client_id", userCredentials.Get("client_id") },
+            { "client_secret", userCredentials.Get("client_secret") }
         };
         // https://developers.google.com/api-client-library/dotnet/guide/aaa_client_secrets
         // Only client_id and client_secret are required. Thus we can just use the credentials on their own.

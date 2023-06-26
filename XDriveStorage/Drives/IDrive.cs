@@ -12,7 +12,7 @@ public interface IDrive
     public DriveCredentials Credentials { get; }
     public DriveConfiguration Configuration { get; }
 
-    public Task<StorageLimit> GetStorageLimit(UserCredentials userCredentials);
+    public Task<DriveInfo> GetDriveInfo(UserCredentials userCredentials);
     public Task<string[]> ListFileNames(UserCredentials credentials);
     public Task<bool> ReadFile(UserCredentials credentials, string name, Stream outputStream);
     public Task<bool> WriteFile(UserCredentials credentials, string name, Stream content);

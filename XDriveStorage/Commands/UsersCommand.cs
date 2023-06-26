@@ -21,17 +21,17 @@ public class UsersCommand
         {
             if (Program.Verbose)
             {
-                Console.WriteLine(user);   
+                Output.WriteLine(user);   
             }
             else
             {
-                Console.WriteLine(user.Id);
+                Output.WriteLine(user.Id);
             }
         }
         
         if (Program.AppConfiguration.Users.Count == 0)
         {
-            Console.WriteLine("No users to display. Add one with 'xdrive users add'.");
+            Output.WriteLine("No users to display. Add one with 'xdrive users add'.");
         }
         
         return 0;
@@ -48,14 +48,14 @@ public class UsersCommand
 
         if (!Program.AppConfiguration.Drives.Exists(drive))
         {
-            Console.WriteLine($"The drive '{drive}' does not exist.");
+            Output.WriteLine($"The drive '{drive}' does not exist.");
 
             return 1;
         }
         
         if (!Program.AppConfiguration.Drives.TryGet(drive, out var driveObject))
         {
-            Console.WriteLine($"Failed to retrieve drive '{drive}'.");
+            Output.WriteLine($"Failed to retrieve drive '{drive}'.");
 
             return 1;
         }
@@ -73,7 +73,7 @@ public class UsersCommand
             }
             catch (JsonReaderException)
             {
-                Console.WriteLine("Parse failed with JsonReaderException, converting input to JSON string.");
+                Output.WriteLine("Parse failed with JsonReaderException, converting input to JSON string.");
 
                 credentials[credential] = credentialInput;
             }
@@ -83,14 +83,14 @@ public class UsersCommand
 
         if (Program.AppConfiguration.Users.Exists(user.Id))
         {
-            Console.WriteLine($"The user '{id}' already exists.");
+            Output.WriteLine($"The user '{id}' already exists.");
 
             return 1;
         }
         
         if (!Program.AppConfiguration.Users.Add(user))
         {
-            Console.WriteLine($"Failed to add user '{id}'.");
+            Output.WriteLine($"Failed to add user '{id}'.");
 
             return 1;
         }
@@ -104,20 +104,20 @@ public class UsersCommand
     {
         if (!Program.AppConfiguration.Users.Exists(id))
         {
-            Console.WriteLine($"The user '{id}' does not exist.");
+            Output.WriteLine($"The user '{id}' does not exist.");
 
             return 1;
         }
         
         if (Program.AppConfiguration.Users.Remove(id))
         {
-            Console.WriteLine($"Removed user '{id}'.");
+            Output.WriteLine($"Removed user '{id}'.");
 
             return 0;
         }
         else
         {
-            Console.WriteLine($"Failed to remove user '{id}'.");
+            Output.WriteLine($"Failed to remove user '{id}'.");
 
             return 1;
         }

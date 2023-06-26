@@ -15,8 +15,7 @@ public class AppConfiguration : IAppConfiguration
     [JsonProperty("config_version", Required = Required.Always)] public ConfigVersion Version { get; set; }
     [JsonProperty("root_user_id")] public string? RootUserId { get; set; }
     [JsonProperty("users")] [JsonConverter(typeof(UsersConverter))] public UserContainer Users { get; private set; }
-    public DriveContainer Drives { get; } // Custom drives cannot be added at the moment, all are hard-coded
-    // i hate newtonsoft
+    [JsonIgnore] public DriveContainer Drives { get; } // Custom drives cannot be added at the moment, all are hard-coded
     [JsonProperty("persistent")] private Dictionary<string, JToken> PersistentJson { get; set; }
     
 
