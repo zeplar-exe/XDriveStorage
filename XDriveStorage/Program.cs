@@ -44,9 +44,6 @@ public class Program
         Verbose = verbose;
         Quiet = quiet;
         
-        if (quiet)
-            IConsole.SetOut(new StringWriter());
-        
         var result = next();
 
         AppConfiguration.Save();
